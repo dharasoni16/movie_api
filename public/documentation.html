@@ -43,54 +43,73 @@
         </tr>
         <tr>
           <th scope="row">Get data about a single movie by title</th>
-          <td>/movies/[title]</td>
+          <td>/movies/[Title]</td>
           <td>Get</td>
           <td>None</td>
           <td>
             A JSON object holding data about single movie containing
             description, genre, director, image URL, whether it’s featured or
-            not.Example { Title: "Kabhi Khushi Kabhie Gham....",
+            not.For example { Title: "Kabhi Khushi Kabhie Gham....",
             Description:"‘It’s all about loving your parents,’ screamed the
             trailer for ‘Kabhi Khushi Kabhie Gham…’, a film that piled on the
             mush in true Karan Johar (‘My Name is Khan’) style.......", Genre:
-            { Name: "melodrama, romance, musical", Description: "Rahul and
-            Rohan reunite after several years.....", }, Director: { Name:
-            "Karan Johar", Bio: "Karan Johar, often informally referred to as
-            KJo, is an Indian filmmaker and television personality..... ",
-            Birth: "May 25, 1972" }, ImageUrl:
+            { Name: "Drama", Description: "Rahul and Rohan reunite after
+            several years.....", }, Director: { Name: "Karan Johar", Bio:
+            "Karan Johar, often informally referred to as KJo, is an Indian
+            filmmaker and television personality..... ", Birth: "May 25,
+            1972",Death:"" }, ImageUrl:
             "https://en.wikipedia.org/wiki/Kabhi_Khushi_Kabhie_Gham...#/media/File:Kabhi_Khushi_Kabhie_Gham..._poster.jpg",
             Featured: true, }
           </td>
         </tr>
         <tr>
           <th scope="row">Get data about a genre by name/title</th>
-          <td>/movies/genre/[genreName]</td>
+          <td>/movies/genres/[Name]</td>
           <td>Get</td>
           <td>None</td>
           <td>
             A JSON object holding data about movie genre containing Name and
-            Description,Example { "Name": "melodrama, romance, musical",
-            "Description": "Rahul and Rohan reunite after several years. Sat
-            on a park bench, Rahul asks Rohan questions about things they had
-            talked about when Rohan was just a kid." }
+            Description,For example { "Name": "Drama",
+            "Description": "In this genre, emotions and family relationships are shown with uttermost importance. Usually, Drama is combined with other genres." }
           </td>
         </tr>
         <tr>
           <th scope="row">Get data about a director by name</th>
-          <td>/movies/director/[directorName]</td>
+          <td>/movies/directors/[Name]</td>
           <td>Get</td>
           <td>None</td>
           <td>
             A JSON object holding data about movie director containing Name,
-            bio,birth year,Example { "Name": "Karan Johar", "Bio": "Karan
+            bio,birth year,death year,For example { "Name": "Karan Johar", "Bio": "Karan
             Johar, often informally referred to as KJo, is an Indian filmmaker
             and television personality, who primarily works in Hindi cinema.
             He has launched the careers of several successful actors under his
-            own Dharma Productions.", "Birth": "May 25, 1972" }
+            own Dharma Productions.", "Birth": "May 25, 1972","Death":"" }
           </td>
         </tr>
         <tr>
           <th colspan="2">Users Endpoints:</th>
+        </tr>
+        <tr>
+          <th scope="row">Get all users</th>
+          <td>/users</td>
+          <td>Get</td>
+          <td>None</td>
+          <td>
+            A JSON object holding data about all the users
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">Get user By Username</th>
+          <td>/users/:Username</td>
+          <td>Get</td>
+          <td>None</td>
+          <td>
+            A JSON object holding data about specified Username, including an
+            ID,For example { "Username":
+            "Jon","Password":"Jon123","Email":"Jon@gmail.com","Birthdate":"1989-01-02",
+            "FavoriteMovies": ["64ecb811852ce60069158c0a"] }
+          </td>
         </tr>
         <tr>
           <th scope="row">Add a user</th>
@@ -98,50 +117,70 @@
           <td>Post</td>
           <td>
             A JSON object holding data about the users to add, structure like:
-            { name: "John", favoriteMovies: ["Dangal"] }
+            For example {"Username":
+            "Jon","Password":"Jon123","Email":"Jon@gmail.com","Birthdate":"1989-01-02"
+            } Note: Username,Password and Email are required fields for users
+            as per define Schema
           </td>
           <td>
             A JSON object holding data about the user that was added,
-            including an ID: { "name": "Jon", "favoriteMovies": [ "Dangal" ],
-            "id": "136cfe8a-e393-43b0-8364-84fe508ba424" }
+            including an ID,For example { "Username":
+            "Jon","Password":"Jon123","Email":"Jon@gmail.com","Birthdate":"1989-01-02"
+            , "favoriteMovies": [], "id":
+            "136cfe8a-e393-43b0-8364-84fe508ba424" }
           </td>
         </tr>
         <tr>
-          <th scope="row">Update userName for user</th>
-          <td>/users/[id]</td>
+          <th scope="row">Update user's details with Username</th>
+          <td>/users/[Username]</td>
           <td>Put</td>
-          <td>A JSON object holding data about the user that needs to be updated,
-             {
-            "name": "Dhara Updated",
-            "favoriteMovies": [] }</td>
+          <td>
+            A JSON object holding data about the user that needs to be
+            updated,For example { "Username":"TomUpdated", "Password":"tom345",
+            "Email":"tom@yahoo.com", "Birthdate":"1989-02-01" }
+          </td>
           <td>
             A JSON object holding data about the user that was updated,
-            including an ID: { "id": 1, "name": "Dhara Updated",
-            "favoriteMovies": [] }
+            including an ID,For example { "_id": "64ef3e26222c1a282a015dbf", "Username":
+            "TomUpdated", "Password": "tom345", "Email": "tom@yahoo.com",
+            "FavoriteMovies": [], "__v": 0, "Birthdate":
+            "1989-02-01T00:00:00.000Z" }
           </td>
         </tr>
         <tr>
           <th scope="row">Add a movie to the list of user favoriteMovies</th>
-          <td>/users/[id]/[movieTitle]</td>
+          <td>/users/[Username]/movies/[MovieID]</td>
           <td>Post</td>
           <td>None</td>
-          <td>A text indicating the movieTitle has been Added</td>
+          <td>
+            A Json object holding userdata including MovieID that has been
+            Added structure like,For example { "_id": "64ef3e26222c1a282a015dbf",
+            "Username": "TomUpdated", "Password": "tom345", "Email":
+            "tom@yahoo.com", "FavoriteMovies": [ "64eca86a852ce60069158c09" ],
+            "__v": 0, "Birthdate": "1989-02-01T00:00:00.000Z" }
+          </td>
         </tr>
         <tr>
           <th scope="row">
             Remove a movie from the list of user favoriteMovies
           </th>
-          <td>/users/[id]/[movieTitle]</td>
+          <td>/users/[Username]/movies/[MovieID]</td>
           <td>Delete</td>
           <td>None</td>
-          <td>A text indicating the movieTitle has been Removed</td>
+          <td>
+            A Json object holding userdata without MovieID that has been
+            Removed structure like,For example { "_id": "64ef3e26222c1a282a015dbf",
+            "Username": "TomUpdated", "Password": "tom345", "Email":
+            "tom@yahoo.com", "FavoriteMovies": [], "__v": 0, "Birthdate":
+            "1989-02-01T00:00:00.000Z" }
+          </td>
         </tr>
         <tr>
-          <th scope="row">Delete a user</th>
-          <td>/users/[id]</td>
+          <th scope="row">Delete a user with Username</th>
+          <td>/users/[Username]</td>
           <td>Delete</td>
           <td>None</td>
-          <td>A text indicating the user id has been Removed</td>
+          <td>A text indicating the Username has been Removed</td>
         </tr>
       </tbody>
     </table>

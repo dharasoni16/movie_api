@@ -1,84 +1,24 @@
+const mongoose = require("mongoose");
+const Models = require("./models.js");
+const uuid = require("uuid");
 const express = require("express"),
   morgan = require("morgan"),
   // import built in modules fs and path
   fs = require("fs"),
   path = require("path");
+const { json } = require("body-parser");
+
+const Movies = Models.Movie;
+const Users = Models.User;
+
+mongoose.connect("mongodb://127.0.0.1:27017/myFlixDB", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 const app = express();
-const bodyParser = require("body-parser"),
-  uuid = require("uuid");
-
-app.use(bodyParser.json());
-
-let users = [
-  {
-    id: 1,
-    name: "Dhara",
-    favoriteMovies: [],
-  },
-  {
-    id: 2,
-    name: "Sanket",
-    favoriteMovies: ["Dangal"],
-  },
-];
-
-let movies = [
-  {
-    Title: "Kabhi Khushi Kabhie Gham....",
-    Description:
-      "‘It’s all about loving your parents,’ screamed the trailer for ‘Kabhi Khushi Kabhie Gham…’, a film that piled on the mush in true Karan Johar (‘My Name is Khan’) style. Here, Johar brought together a dream cast to play a fractured family. Billionaire Yashvardhan (Bachchan) is an authoritarian who banishes his adopted son Rahul (Khan) for marrying a woman against his wishes. Years later, Raj’s brother Rohan (Roshan) strives to bring the family together. Boasting opulent production design, lavish musical set pieces and an orgy of superstars, ‘K3G’ (as the film came to be known) is guilty-pleasure Bollywood at its best.",
-    Genre: {
-      Name: "melodrama, romance, musical",
-      Description:
-        "Rahul and Rohan reunite after several years. Sat on a park bench, Rahul asks Rohan questions about things they had talked about when Rohan was just a kid.",
-    },
-    Director: {
-      Name: "Karan Johar",
-      Bio: "Karan Johar, often informally referred to as KJo, is an Indian filmmaker and television personality, who primarily works in Hindi cinema. He has launched the careers of several successful actors under his own Dharma Productions. ",
-      Birth: "May 25, 1972",
-    },
-    ImageUrl:
-      "https://en.wikipedia.org/wiki/Kabhi_Khushi_Kabhie_Gham...#/media/File:Kabhi_Khushi_Kabhie_Gham..._poster.jpg",
-    Featured: true,
-  },
-  {
-    Title: "Chak De! India",
-    Description:
-      "Between clever gangster movie ‘Ab Tak Chhappan’ (2004) and the grossly underrated ‘Rocket Singh: Salesman of the Year’ (2009), director Shimit Amin teamed up with writer Jaideep Sahni to give us this quintessential sports drama. The film narrates the story of a tainted ex-India hockey player (Khan) who coaches the women’s team to World Cup glory. While sticking to the underdog-overcomes-obstacles template, Amin and Sahni deftly weave in themes of cultural diversity, religious difference and feminism.",
-    Genre: {
-      Name: "sports, drama, musical",
-      Description:
-        "The girls’ team goes up against the boys’ national team, winning the respect of the opposing team and the selectors.",
-    },
-    Director: {
-      Name: "Shimit Amin",
-      Bio: "Shimit Amin is an Indian American film director and editor. He is best known for the award-winning film Chak De! India starring Shah Rukh Khan.",
-      Birth: "January 1, 1900",
-    },
-    ImageUrl:
-      "https://en.wikipedia.org/wiki/Chak_De!_India#/media/File:Chak_De!_India.jpg",
-    Featured: true,
-  },
-  {
-    Title: "Zindagi Na Milegi Dobara",
-    Description:
-      "Translated as ‘You only live once’, this buddy-meets-mid-life-crisis movie sees three friends take a road trip in Spain: Arjun (Roshan) is a workaholic; Imraan (Farhan Akhtar) wants to track down his biological father; and Kabir (Deol) is unsure about his upcoming wedding. ‘Zindagi Na Milegi Dobara’ had a message for middle-class Indians living the new liberal dream with well-paid jobs: it’s okay not to conform or to have a happily-ever-after romance.",
-    Genre: {
-      Name: "comedy, adventure, drama, road movie",
-      Description:
-        "As the friends do Pamplona’s bull run – in slow motion – there’s a voiceover of Akhtar’s character, Imraan, reciting a poem about being free. The poem is written by Akhtar’s screenwriter father, Javed (‘Sholay’, ‘Deewar’). How meta is that?",
-    },
-    Director: {
-      Name: "Zoya Akhtar",
-      Bio: "Zoya Akhtar is an Indian film director and screenwriter who works in Hindi cinema. After completing a diploma in filmmaking from NYU, she assisted directors such as Mira Nair, Tony Gerber and Dev Benegal, before becoming a writer and director herself. ",
-      Birth: "October 14, 1972",
-    },
-    ImageUrl:
-      "https://en.wikipedia.org/wiki/Zindagi_Na_Milegi_Dobara#/media/File:Zindagi_Na_Milegi_Dobara.jpg",
-    Featured: true,
-  },
-];
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // create a write  stream (in append mode)
 // a 'log.txt' file is created in root directory
@@ -95,110 +35,178 @@ app.get("/", (req, res) => {
 });
 
 // Read (Returns list of all movies)
-app.get("/movies", (req, res) => {
-  res.status(200).json(movies);
+app.get("/movies", async (req, res) => {
+  await Movies.find()
+    .then((movies) => {
+      res.status(201).json(movies);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
 // Read (Returns Movie by title)
-app.get("/movies/:title", (req, res) => {
-  const { title } = req.params;
-  //find movie by title and return it as json object if found else send error message
-  const movie = movies.find((movie) => movie.Title === title);
-  if (movie) {
-    res.status(200).json(movie);
-  } else {
-    res.status(400).json({ message: "Movie not Found" });
-  }
+app.get("/movies/:Title", async (req, res) => {
+  await Movies.findOne({ Title: req.params.Title })
+    .then((movies) => {
+      res.status(201).json(movies);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
 // Read (Returns movie genere description by name/title)
-app.get("/movies/genre/:genreName", (req, res) => {
-  const { genreName } = req.params;
-  const genre = movies.find((movie) => movie.Genre.Name === genreName).Genre;
-  if (genre) {
-    return res.status(200).json(genre);
-  } else {
-    res.status(400).send("No such genre");
-  }
+app.get("/movies/genres/:Name", async (req, res) => {
+  await Movies.findOne({ "Genre.Name": req.params.Name })
+    .then((movie) => {
+      res.json(movie.Genre);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
-// Read (Returns data about movie director by name)
-app.get("/movies/directors/:directorName", (req, res) => {
-  const { directorName } = req.params;
-  const director = movies.find(
-    (movie) => movie.Director.Name === directorName
-  ).Director;
-  if (director) {
-    return res.status(200).json(director);
-  } else {
-    res.status(400).send("No such director");
-  }
+// Read (Returns data about director by director name)
+app.get("/movies/directors/:Name", async (req, res) => {
+  await Movies.findOne({ "Director.Name": req.params.Name })
+    .then((movie) => {
+      res.json(movie.Director);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
 // Add a user
-app.post("/users", (req, res) => {
-  const newUser = req.body;
-  if (newUser.name) {
-    newUser.id = uuid.v4();
-    users.push(newUser);
-    res.status(201).json(newUser);
-  } else {
-    res.status(400).json("Please enter the name of user");
-  }
+app.post("/users", async (req, res) => {
+  await Users.findOne({ Username: req.body.Username })
+    .then((user) => {
+      if (user) {
+        return res.status(400).send(req.body.Username + "already exists");
+      } else {
+        Users.create({
+          Username: req.body.Username,
+          Password: req.body.Password,
+          Email: req.body.Email,
+          Birthdate: req.body.Birthdate,
+        })
+          .then((user) => {
+            res.status(201).json(user);
+          })
+          .catch((error) => {
+            console.error(error);
+            res.status(500).send("Error: " + error);
+          });
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send("Error:" + error);
+    });
 });
 
-// Update user with userName
-app.put("/users/:id", (req, res) => {
-  const { id } = req.params;
-  const updateUser = req.body;
-  let user = users.find((user) => user.id == id);
-  if (user) {
-    user.name = updateUser.name;
-    res.status(200).json(user);
-  } else {
-    res.status(400).send("No such user");
-  }
+// Get all users
+app.get("/users", async (req, res) => {
+  await Users.find()
+    .then((users) => {
+      res.status(201).json(users);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
-// Add a movie by user
-app.post("/users/:id/:movieTitle", (req, res) => {
-  const { id, movieTitle } = req.params;
+// Get a user by username
+app.get("/users/:Username", async (req, res) => {
+  await Users.findOne({ Username: req.params.Username })
+    .then((user) => {
+      res.json(user);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
+});
 
-  let user = users.find((user) => user.id == id);
-  if (user) {
-    user.favoriteMovies.push(movieTitle);
-    res.status(200).send(`${movieTitle} has been added to user id ${id}`);
-  } else {
-    res.status(400).send("No such user");
-  }
+// Update user's info, by username
+app.put("/users/:Username", async (req, res) => {
+  await Users.findOneAndUpdate(
+    { Username: req.params.Username },
+    {
+      $set: {
+        Username: req.body.Username,
+        Password: req.body.Password,
+        Email: req.body.Email,
+        Birthdate: req.body.Birthdate,
+      },
+    },
+    { new: true }
+  ) // This line makes sure that the updated document is returned
+    .then((updatedUser) => {
+      res.json(updatedUser);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
+});
+
+// Add a movie to user's list of favorites
+app.post("/users/:Username/movies/:MovieID", async (req, res) => {
+  await Users.findOneAndUpdate(
+    { Username: req.params.Username },
+    {
+      $push: { FavoriteMovies: req.params.MovieID },
+    },
+    { new: true }
+  ) // This line makes sure that the updatd document is returned
+    .then((updatedUser) => {
+      res.json(updatedUser);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
 // Delete the movie from FavMovie list by user
-app.delete("/users/:id/:movieTitle", (req, res) => {
-  const { id, movieTitle } = req.params;
-
-  let user = users.find((user) => user.id == id);
-  if (user) {
-    user.favoriteMovies = user.favoriteMovies.filter(
-      (title) => title !== movieTitle
-    );
-    res.status(200).send(`${movieTitle} has been removed from user id ${id}`);
-  } else {
-    res.status(400).send("No such user");
-  }
+app.delete("/users/:Username/movies/:MovieID", async (req, res) => {
+  await Users.findOneAndUpdate(
+    { Username: req.params.Username },
+    {
+      $pull: { FavoriteMovies: req.params.MovieID },
+    },
+    { new: true }
+  ) // This line makes sure that the updatd document is returned
+    .then((updatedUser) => {
+      res.json(updatedUser);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
-// Delete user
-app.delete("/users/:id", (req, res) => {
-  const { id } = req.params;
-
-  let user = users.find((user) => user.id == id);
-  if (user) {
-    user = users.filter((user) => user.id != id);
-    res.status(200).send(`userid ${id} has been removed`);
-  } else {
-    res.status(400).send("No such user");
-  }
+// Delete a user by username
+app.delete("/users/:Username", async (req, res) => {
+  await Users.findOneAndRemove({ Username: req.params.Username })
+    .then((user) => {
+      if (!user) {
+        res.status(400).send(req.params.Username + " was not found");
+      } else {
+        res.status(200).send(req.params.Username + " was deleted.");
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
 app.use(express.static("public"));
