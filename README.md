@@ -1,6 +1,6 @@
 # movie_api
 
-Movie-api name myFlix is the server-side component of a “movies” web application.Its an API build using Node.js,Express.js and MongoDB. The web application will provide users with access to information about different movies, directors, and genres. Users will be able to sign up, update their personal information, create a list of their favorite movies, remove the movie from their favorite movies list and can also deregister themselves.The App is deployed on render at https://movie-api-0fqq.onrender.com/. All the endpoints details are available at documentation.html file at https://movie-api-0fqq.onrender.com/documentation.html.
+Movie-api name myFlix is the server-side component of a “movies” web application.Its an REST API build using Node.js,Express.js and MongoDB. The web application will provide users with access to information about different movies, directors, and genres. Users will be able to sign up, update their personal information, create a list of their favorite movies, remove the movie from their favorite movies list and can also deregister themselves.The App is deployed on render at https://movie-api-0fqq.onrender.com/. All the endpoints details are available at documentation.html file at https://movie-api-0fqq.onrender.com/documentation.html.
 
 ## Key-Features
 * Return a list of ALL movies to the user
@@ -19,7 +19,7 @@ Movie-api name myFlix is the server-side component of a “movies” web applica
 - MongoDB
 * Rest & API Endpoints
 + Mongoose(Business Logic Layer)
--JWT(token-based) authentication
+- JWT(token-based) authentication
 * CORS in Express
 + Hashing using bcrypt
 * Supporting Packages are installed (See package.json file for detail) 
