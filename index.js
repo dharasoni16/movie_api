@@ -7,7 +7,7 @@ const express = require("express"),
   fs = require("fs"),
   path = require("path");
 const { json } = require("body-parser");
-const { check, validatonResult } = require("express-validator");
+const { check, validationResult } = require("express-validator");
 
 const Movies = Models.Movie;
 const Users = Models.User;
