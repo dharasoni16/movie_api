@@ -12,7 +12,14 @@ const { check, validatonResult } = require("express-validator");
 const Movies = Models.Movie;
 const Users = Models.User;
 
-mongoose.connect("mongodb://127.0.0.1:27017/myFlixDB", {
+// function to connect API to local database
+// mongoose.connect("mongodb://127.0.0.1:27017/myFlixDB", {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
+
+// function to connect API to MongodbAtlas
+mongoose.connect(process.env.CONNECTION_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -332,8 +339,8 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something Broke!");
 });
 
-const port=process.env.PORT || 8080;
+const port = process.env.PORT || 8080;
 // listen for requests
-app.listen(port,'0.0.0.0', () => {
+app.listen(port, "0.0.0.0", () => {
   console.log("Your app is listening on port" + port);
 });
