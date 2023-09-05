@@ -19,7 +19,7 @@ const Users = Models.User;
 // });
 
 // function to connect API to MongodbAtlas
-mongoose.connect(process.env.CONNECTION_URI, {
+mongoose.connect("mongodb+srv://dharasoni1692:Dharasanket01@mydatabasecluster.rxwxdav.mongodb.net/myFlixDB?retryWrites=true&w=majority", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -339,8 +339,8 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something Broke!");
 });
 
-const port = process.env.PORT || 8080;
+const port=process.env.PORT || 8080;
 // listen for requests
-app.listen(port, "0.0.0.0", () => {
+app.listen(port,'0.0.0.0', () => {
   console.log("Your app is listening on port" + port);
 });
