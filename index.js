@@ -12,14 +12,14 @@ const { check, validatonResult } = require("express-validator");
 const Movies = Models.Movie;
 const Users = Models.User;
 
-// function to connect API to local database
+// function to connect  to local database
 // mongoose.connect("mongodb://127.0.0.1:27017/myFlixDB", {
 //   useNewUrlParser: true,
 //   useUnifiedTopology: true,
 // });
 
 // function to connect API to MongodbAtlas
-mongoose.connect("mongodb+srv://dharasoni1692:Dharasanket01@mydatabasecluster.rxwxdav.mongodb.net/myFlixDB?retryWrites=true&w=majority", {
+mongoose.connect(process.env.CONNECTION_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
