@@ -7,6 +7,7 @@ const express = require("express"),
   fs = require("fs"),
   path = require("path");
 const { json } = require("body-parser");
+const { check, validatonResult } = require("express-validator");
 
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -19,6 +20,27 @@ mongoose.connect("mongodb://127.0.0.1:27017/myFlixDB", {
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// importing cors module in app for data security
+const cors = require("cors");
+
+// code to allow only certain origin request to access the app
+let allowedOrigins = ["http://localhost:8080", "http://testsite.com"];
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        // If a specific origin isn't found on the list of a allowed origins
+        let message =
+          "The CORS policy for this application doesn't allow access from origin  " +
+          origin;
+        return callback(new Error(message), false);
+      }
+      return callback(null, true);
+    },
+  })
+);
 
 // including auth.js file here and the app argument ensures that Express is available in auth.js file
 let auth = require("./auth.js")(app);
@@ -106,32 +128,56 @@ app.get(
 );
 
 // Add a user
-app.post("/users", async (req, res) => {
-  await Users.findOne({ Username: req.body.Username })
-    .then((user) => {
-      if (user) {
-        return res.status(400).send(req.body.Username + "already exists");
-      } else {
-        Users.create({
-          Username: req.body.Username,
-          Password: req.body.Password,
-          Email: req.body.Email,
-          Birthdate: req.body.Birthdate,
-        })
-          .then((user) => {
-            res.status(201).json(user);
+app.post(
+  "/users",
+  // Validation logic here for request
+  // you can either use a chain of methods lik .not().isEmpty()
+  // Which means "opposite of isEmpty" in plain english "is not empty"
+  // or use .isLength({min:5}) which means minimum value of 5 characters are only allowed
+  [
+    check("Username", "Username is required").isLength({ min: 5 }),
+    check(
+      "Username",
+      "Username contains non alphanumeric characters- not allowed."
+    ).isAlphanumeric(),
+    check("Password", "Password is required").not().isEmpty(),
+    check("Email", "Email does not appear to be valid").isEmail(),
+  ],
+  async (req, res) => {
+    // check the validation object for errors
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+    let hashedPassword = Users.hashPassword(req.body.Password);
+    await Users.findOne({ Username: req.body.Username })
+      // Search to see if a user with the requested username already exists
+      .then((user) => {
+        if (user) {
+          // If the user is found, send a response that it already exists
+          return res.status(400).send(req.body.Username + "already exists");
+        } else {
+          Users.create({
+            Username: req.body.Username,
+            Password: hashedPassword,
+            Email: req.body.Email,
+            Birthdate: req.body.Birthdate,
           })
-          .catch((error) => {
-            console.error(error);
-            res.status(500).send("Error: " + error);
-          });
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).send("Error:" + error);
-    });
-});
+            .then((user) => {
+              res.status(201).json(user);
+            })
+            .catch((error) => {
+              console.error(error);
+              res.status(500).send("Error: " + error);
+            });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send("Error:" + error);
+      });
+  }
+);
 
 // Get all users
 app.get(
@@ -168,8 +214,26 @@ app.get(
 // Update user's info, by username
 app.put(
   "/users/:Username",
+  // Validation logic here for request
+  // you can either use a chain of methods lik .not().isEmpty()
+  // Which means "opposite of isEmpty" in plain english "is not empty"
+  // or use .isLength({min:5}) which means minimum value of 5 characters are only allowed
+  [
+    check("Username", "Username is required").isLength({ min: 5 }),
+    check(
+      "Username",
+      "Username contains non alphanumeric characters- not allowed."
+    ).isAlphanumeric(),
+    check("Password", "Password is required").not().isEmpty(),
+    check("Email", "Email does not appear to be valid").isEmail(),
+  ],
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
+    // check the validation object for errors
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
     // Condition to check added here
     if (req.user.Username !== req.params.Username) {
       return res.status(400).send("Permission denied");
@@ -268,7 +332,8 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something Broke!");
 });
 
+const port=process.env.PORT || 8080;
 // listen for requests
-app.listen(8080, () => {
-  console.log("Your app is listening on port 8080.");
+app.listen(port,'0.0.0.0', () => {
+  console.log("Your app is listening on port" + port);
 });
