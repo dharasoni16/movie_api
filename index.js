@@ -331,7 +331,7 @@ app.delete(
         } else {
           res
             .status(200)
-            .json({ error: req.params.Username + " was deleted." });
+            .json({ message: req.params.Username + " was deleted." });
         }
       })
       .catch((err) => {
