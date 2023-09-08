@@ -77,11 +77,11 @@ app.get(
   async (req, res) => {
     await Movies.find()
       .then((movies) => {
-        res.status(201).json(movies);
+        res.status(200).json(movies);
       })
       .catch((err) => {
         console.error(err);
-        res.status(500).send("Error: " + err);
+        res.status(401).json({ errors: err.array() });
       });
   }
 );
@@ -93,11 +93,11 @@ app.get(
   async (req, res) => {
     await Movies.findOne({ Title: req.params.Title })
       .then((movies) => {
-        res.status(201).json(movies);
+        res.status(200).json(movies);
       })
       .catch((err) => {
         console.error(err);
-        res.status(500).send("Error: " + err);
+        res.status(401).json({ errors: err.array() });
       });
   }
 );
@@ -113,7 +113,7 @@ app.get(
       })
       .catch((err) => {
         console.error(err);
-        res.status(500).send("Error: " + err);
+        res.status(401).json({ errors: err.array() });
       });
   }
 );
@@ -129,7 +129,7 @@ app.get(
       })
       .catch((err) => {
         console.error(err);
-        res.status(500).send("Error: " + err);
+        res.status(401).json({ errors: err.array() });
       });
   }
 );
@@ -142,7 +142,10 @@ app.post(
   // Which means "opposite of isEmpty" in plain english "is not empty"
   // or use .isLength({min:5}) which means minimum value of 5 characters are only allowed
   [
-    check("Username", "Username is required").isLength({ min: 5 }),
+    check(
+      "Username",
+      "Enter a Username that is atleast 5 letters long"
+    ).isLength({ min: 5 }),
     check(
       "Username",
       "Username contains non alphanumeric characters- not allowed."
@@ -162,7 +165,9 @@ app.post(
       .then((user) => {
         if (user) {
           // If the user is found, send a response that it already exists
-          return res.status(400).send(req.body.Username + "already exists");
+          return res
+            .status(400)
+            .json({ errors: req.body.Username + " Already exists" });
         } else {
           Users.create({
             Username: req.body.Username,
@@ -175,13 +180,13 @@ app.post(
             })
             .catch((error) => {
               console.error(error);
-              res.status(500).send("Error: " + error);
+              res.status(400).json({ errors: error.array() });
             });
         }
       })
       .catch((error) => {
         console.error(error);
-        res.status(500).send("Error:" + error);
+        res.status(500).json({ errors: error.array() });
       });
   }
 );
@@ -193,11 +198,11 @@ app.get(
   async (req, res) => {
     await Users.find()
       .then((users) => {
-        res.status(201).json(users);
+        res.status(200).json(users);
       })
       .catch((err) => {
         console.error(err);
-        res.status(500).send("Error: " + err);
+        res.status(401).json({ errors: err.array() });
       });
   }
 );
@@ -213,7 +218,7 @@ app.get(
       })
       .catch((err) => {
         console.error(err);
-        res.status(500).send("Error: " + err);
+        res.status(401).json({ errors: err.array() });
       });
   }
 );
@@ -263,7 +268,7 @@ app.put(
       })
       .catch((err) => {
         console.error(err);
-        res.status(500).send("Error: " + err);
+        res.status(500).json({ errors: err.array() });
       });
   }
 );
@@ -285,7 +290,7 @@ app.post(
       })
       .catch((err) => {
         console.error(err);
-        res.status(500).send("Error: " + err);
+        res.status(401).json({ errors: err.array() });
       });
   }
 );
@@ -307,7 +312,7 @@ app.delete(
       })
       .catch((err) => {
         console.error(err);
-        res.status(500).send("Error: " + err);
+        res.status(401).json({ errors: err.array() });
       });
   }
 );
@@ -320,14 +325,18 @@ app.delete(
     await Users.findOneAndRemove({ Username: req.params.Username })
       .then((user) => {
         if (!user) {
-          res.status(400).send(req.params.Username + " was not found");
+          res
+            .status(400)
+            .json({ error: req.params.Username + " was not found" });
         } else {
-          res.status(200).send(req.params.Username + " was deleted.");
+          res
+            .status(200)
+            .json({ error: req.params.Username + " was deleted." });
         }
       })
       .catch((err) => {
         console.error(err);
-        res.status(500).send("Error: " + err);
+        res.status(401).json({ error: err.array() });
       });
   }
 );
@@ -339,8 +348,8 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something Broke!");
 });
 
-const port=process.env.PORT || 8080;
+const port = process.env.PORT || 8080;
 // listen for requests
-app.listen(port,'0.0.0.0', () => {
+app.listen(port, "0.0.0.0", () => {
   console.log("Your app is listening on port" + port);
 });
