@@ -284,7 +284,7 @@ app.post(
         $push: { FavoriteMovies: req.params.MovieID },
       },
       { new: true }
-    ) // This line makes sure that the updatd document is returned
+    ) // This line makes sure that the updated document is returned
       .then((updatedUser) => {
         res.json(updatedUser);
       })
@@ -306,7 +306,7 @@ app.delete(
         $pull: { FavoriteMovies: req.params.MovieID },
       },
       { new: true }
-    ) // This line makes sure that the updatd document is returned
+    ) // This line makes sure that the updated document is returned
       .then((updatedUser) => {
         res.json(updatedUser);
       })
