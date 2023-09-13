@@ -32,7 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 const cors = require("cors");
 
 // code to allow only certain origin request to access the app
-let allowedOrigins = ["http://localhost:8080", "http://testsite.com"];
+let allowedOrigins = ["http://localhost:8080", "http://testsite.com", "http://localhost:1234"];
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -73,7 +73,6 @@ app.get("/", (req, res) => {
 // Read (Returns list of all movies)
 app.get(
   "/movies",
-  passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     await Movies.find()
       .then((movies) => {
