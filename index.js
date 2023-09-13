@@ -32,7 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 const cors = require("cors");
 
 // code to allow only certain origin request to access the app
-let allowedOrigins = ["http://localhost:8080", "http://testsite.com"];
+let allowedOrigins = ["http://localhost:8080", "http://testsite.com", "http://localhost:1234"];
 app.use(
   cors({
     origin: (origin, callback) => {
