@@ -32,7 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 const cors = require("cors");
 
 // code to allow only certain origin request to access the app
-let allowedOrigins = ["http://localhost:8080", "http://testsite.com", "http://localhost:1234", "https://myflix-client-bollywood.netlify.app", "http://localhost:4200", "https://dharasoni16.github.io/"];
+let allowedOrigins = ["http://localhost:8080", "http://testsite.com", "http://localhost:1234", "https://myflix-client-bollywood.netlify.app", "http://localhost:4200", "https://dharasoni16.github.io/",];
 app.use(
   cors({
     origin: (origin, callback) => {
