@@ -15,13 +15,13 @@ let generateJWToken = (user) => {
 
 /* POST login */
 /**
-Endpoint to authenticate a user and generate a JWT token for login.
-*@name UserLogin
-*@route {POST} /login
-*@param {string} req.body.username - The username of the user.
-*@param {string} req.body.password - The password of the user.
-*@returns {object} The authenticated user object and a JWT token.
-*@throws {400} Bad Request error - If the username or password is incorrect.
+* Endpoint to authenticate a user and generate a JWT token for login.
+* @name UserLogin
+* @route {POST} /login
+* @param {string} req.body.username - The username of the user.
+* @param {string} req.body.password - The password of the user.
+* @returns {object} The authenticated user object and a JWT token.
+* @throws {400} Bad Request error - If the username or password is incorrect.
 */
 
 module.exports = (router) => {
