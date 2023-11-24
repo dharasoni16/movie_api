@@ -70,7 +70,15 @@ app.get("/", (req, res) => {
   res.send("Welcome to myFLix movie app!");
 });
 
-// Read (Returns list of all movies)
+/**
+ * Get all movies
+ *
+ * @route GET /movies
+ * @group Movies - Operations related to movies
+ * @param {function} passport.authenticate("jwt", { session: false }) - Middleware for authenticating using JWT
+ * @param {function} async (req, res) - Asynchronous function to handle the request and response objects
+ * @returns {Promise} -.A Promise that resolves to an array of movie objects or an error object when the response is sent
+ */
 app.get(
   "/movies",
   passport.authenticate("jwt", { session: false }),
@@ -86,7 +94,16 @@ app.get(
   }
 );
 
-// Read (Returns Movie by title)
+/**
+ * Get a movie by title.
+ *
+ * @route GET /movies/:Title
+ * @group Movies - Operations related to movies
+ * @param {string} "/movies/:Title" - The url path for the endpoint
+ * @param {function} passport.authenticate("jwt", { session: false }) - Middleware for authenticating using JWT
+ * @param {function} async (req, res) - Asynchronous function to handle the request and response objects
+ * @returns {Promise} -.A Promise that resolves to json object of movies or an error object when the response is sent
+ */
 app.get(
   "/movies/:Title",
   passport.authenticate("jwt", { session: false }),
@@ -102,7 +119,16 @@ app.get(
   }
 );
 
-// Read (Returns movie genere description by name/title)
+/**
+ * Retrieve genre details by genre name
+ *
+ * @route GET movies/genres/:Name
+ * @group Movies - Operations related to movies
+ * @param {string} "/movies/genres/:Name" - The URL path for the endpoint
+ * @param {function} passport.authenticate("jwt", { session: false }) - Middleware for authenticating using JWT
+ * @param {function} async (req, res) - Asynchronous function to handle the request and response objects
+ * @returns {Promise} -.A Promise that resolves when the response is sent
+ */
 app.get(
   "/movies/genres/:Name",
   passport.authenticate("jwt", { session: false }),
@@ -118,7 +144,16 @@ app.get(
   }
 );
 
-// Read (Returns data about director by director name)
+/**
+ * Retrieve director details by director name
+ *
+ * @route GET movies/directors/:Name
+ * @group Movies - Operations related to movies
+ * @param {string} "/movies/directors/:Name" - The URL path for the endpoint
+ * @param {function} passport.authenticate("jwt", { session: false }) - Middleware for authenticating using JWT
+ * @param {function} async (req, res) - Asynchronous function to handle the request and response objects
+ * @returns {Promise} -.A Promise that resolves when the response is sent
+ */
 app.get(
   "/movies/directors/:Name",
   passport.authenticate("jwt", { session: false }),
@@ -134,7 +169,15 @@ app.get(
   }
 );
 
-// Add a user
+/**
+Endpoint for creating a new user.
+*
+*@route {POST} /users
+*@group Users - Operations related to users
+*@param {Object} req - The request object.
+*@param {Object} res - The response object.
+*@returns {Object} - The response object containing the created user or error messages.
+*/
 app.post(
   "/users",
   // Validation logic here for request
@@ -191,7 +234,15 @@ app.post(
   }
 );
 
-// Get all users
+/**
+ * Get all users
+ *
+ * @route GET /users
+ * @group Users - Operations related to users
+ * @param {function} passport.authenticate("jwt", { session: false }) - Middleware for authenticating using JWT
+ * @param {function} async (req, res) - Asynchronous function to handle the request and response objects
+ * @returns {Promise} -.A Promise that resolves to an array of user objects or an error object when the response is sent
+ */
 app.get(
   "/users",
   passport.authenticate("jwt", { session: false }),
@@ -207,7 +258,16 @@ app.get(
   }
 );
 
-// Get a user by username
+/**
+ * Get a user by username.
+ *
+ * @route GET /users/:Username
+ * @group Users - Operations related to users
+ * @param {string} "/users/:Username" - The url path for the endpoint
+ * @param {function} passport.authenticate("jwt", { session: false }) - Middleware for authenticating using JWT
+ * @param {function} async (req, res) - Asynchronous function to handle the request and response objects
+ * @returns {Promise} -.A Promise that resolves to json object of users or an error object when the response is sent
+ */
 app.get(
   "/users/:Username",
   passport.authenticate("jwt", { session: false }),
@@ -223,7 +283,16 @@ app.get(
   }
 );
 
-// Update user's info, by username
+/**
+Endpoint for updating data for an existing user by username.
+*
+*@route {PUT} /users/:Username
+*@group Users - Operations related to users
+*@param {string} "/users/:Username" - The url path for the endpoint
+*@param {function} passport.authenticate("jwt", { session: false }) - Middleware for authenticating using JWT
+*@param {function} async (req, res) - Asynchronous function to handle the request and response objects
+*@returns {Promise} -.A Promise that resolves to json object of updated user details or an error object when the response is sent
+*/
 app.put(
   "/users/:Username",
   // Validation logic here for request
@@ -271,7 +340,20 @@ app.put(
   }
 );
 
-// Add a movie to user's list of favorites
+
+/**
+Endpoint to add a movie to a user's favorite movies list.
+*
+*@route {POST} /users/:Username/movies/:MovieID
+*@group Users- Operations related to users
+*@param {string} req.params.Username - The username of the user.
+*@param {string} req.params.MovieID - The ID of the movie to be added to favorites.
+*@param {function} passport.authenticate("jwt", { session: false }) - Middleware for authenticating using JWT
+*@param {function} async (req, res) - Asynchronous function to handle the request and response objects
+*@returns {object} The updated user document with the added movie in the favorite movies list.
+*@throws {401} Unauthorized error - If the user is not authenticated or the JWT token is invalid.
+*/
+
 app.post(
   "/users/:Username/movies/:MovieID",
   passport.authenticate("jwt", { session: false }),
@@ -293,7 +375,19 @@ app.post(
   }
 );
 
-// Delete the movie from FavMovie list by user
+/**
+Endpoint to delete a movie from a user's favorite movies list.
+*
+*@route {DELETE} /users/:Username/movies/:MovieID
+*@group Users- Operations related to users
+*@param {string} req.params.Username - The username of the user.
+*@param {string} req.params.MovieID - The ID of the movie to be deleted from the favorites.
+*@param {function} passport.authenticate("jwt", { session: false }) - Middleware for authenticating using JWT
+*@param {function} async (req, res) - Asynchronous function to handle the request and response objects
+*@returns {object} The updated user document with the deleted movie from the favorite movies list.
+*@throws {401} Unauthorized error - If the user is not authenticated or the JWT token is invalid.
+*/
+
 app.delete(
   "/users/:Username/movies/:MovieID",
   passport.authenticate("jwt", { session: false }),
@@ -315,7 +409,16 @@ app.delete(
   }
 );
 
-// Delete a user by username
+/**
+Endpoint to delete a user by username.
+*
+*@route {DELETE} /users/:Username
+*@group Users - Operations related to users
+*@param {string} "/users/:Username" - The url path for the endpoint
+*@param {function} passport.authenticate("jwt", { session: false }) - Middleware for authenticating using JWT
+*@param {function} async (req, res) - Asynchronous function to handle the request and response objects
+*@returns {Promise} -.A Promise that resolves to json object with name of a user being deleted or an error object when the response is sent
+*/
 app.delete(
   "/users/:Username",
   passport.authenticate("jwt", { session: false }),
